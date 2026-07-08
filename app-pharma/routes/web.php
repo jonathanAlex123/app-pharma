@@ -1,3 +1,16 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+// =========================================================================
+// PARTE 1: RUTAS ANTERIORES
+// =========================================================================
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+
 // =========================================================================
 // PARTE 2: GESTIÓN DE FACTURACIÓN (Ejercicios 4, 5 y 6)
 // =========================================================================
@@ -29,7 +42,7 @@ Route::get('/facturas/clientes/historial', function () {
                     <td>{$factura->num_factura}</td>
                     <td>{$factura->cliente}</td>
                     <td>{$factura->fecha_emision}</td>
-                    <td>\${$factura->total_pagar}</td>
+                    <td>\\${$factura->total_pagar}</td>
                     <td>{$estadoStr}</td>
                   </tr>";
     }
@@ -62,7 +75,7 @@ Route::get('/facturas/clientes/detalle/{numero}', function ($numero) {
                     <li><strong>Número:</strong> {$facturaEncontrada->num_factura}</li>
                     <li><strong>Cliente:</strong> {$facturaEncontrada->cliente}</li>
                     <li><strong>Fecha de Emisión:</strong> {$facturaEncontrada->fecha_emision}</li>
-                    <li><strong>Total a Pagar:</strong> \${$facturaEncontrada->total_pagar}</li>
+                    <li><strong>Total a Pagar:</strong> \\${$facturaEncontrada->total_pagar}</li>
                     <li><strong>Estado:</strong> {$facturaEncontrada->estado}</li>
                 </ul>
             </div>
@@ -101,16 +114,16 @@ Route::get('/facturas/proveedores/resumen', function () {
         $html .= "<tr>
                     <td>{$prov->proveedor}</td>
                     <td>{$prov->nrc}</td>
-                    <td>\${$prov->monto_sin_iva}</td>
-                    <td>\${$iva}</td>
-                    <td>\${$totalFila}</td>
+                    <td>\\${$prov->monto_sin_iva}</td>
+                    <td>\\${$iva}</td>
+                    <td>\\${$totalFila}</td>
                   </tr>";
     }
 
     $html .= "<tfoot>
                 <tr>
                     <td colspan='4' style='text-align: right; padding-right: 10px;'><strong>Sumatoria Total Acumulada:</strong></td>
-                    <td style='background-color: #d1f7d1;'><strong>\${$sumaTotalAcumulada}</strong></td>
+                    <td style='background-color: #d1f7d1;'><strong>\\${$sumaTotalAcumulada}</strong></td>
                 </tr>
               </tfoot>";
     
