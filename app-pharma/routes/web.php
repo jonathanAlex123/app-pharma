@@ -1,5 +1,5 @@
 // =========================================================================
-// PARTE 2: GESTIÓN DE FACTURACIÓN
+// PARTE 2: GESTIÓN DE FACTURACIÓN (Ejercicios 4, 5 y 6)
 // =========================================================================
 
 // Ejercicio 4: Historial General de Facturas de Clientes
@@ -20,7 +20,6 @@ Route::get('/facturas/clientes/historial', function () {
                 </tr>';
 
     foreach ($facturas as $factura) {
-        // Validación del estado Pendiente
         $estadoStr = $factura->estado;
         if ($estadoStr === 'Pendiente') {
             $estadoStr = '<strong style="color: red;">⚠️ PENDIENTE DE COBRO</strong>';
@@ -51,11 +50,10 @@ Route::get('/facturas/clientes/detalle/{numero}', function ($numero) {
     foreach ($facturas as $factura) {
         if ($factura->num_factura === $numero) {
             $facturaEncontrada = $factura;
-            break; // Si la encontramos, salimos del ciclo
+            break;
         }
     }
 
-    // Renderizado con condicional
     if ($facturaEncontrada) {
         $html = "
             <div style='border: 1px solid #000; padding: 20px; width: 350px; background-color: #f9f9f9;'>
@@ -98,7 +96,6 @@ Route::get('/facturas/proveedores/resumen', function () {
     foreach ($proveedores as $prov) {
         $iva = $prov->monto_sin_iva * 0.13;
         $totalFila = $prov->monto_sin_iva + $iva;
-        
         $sumaTotalAcumulada += $totalFila;
 
         $html .= "<tr>
@@ -110,7 +107,6 @@ Route::get('/facturas/proveedores/resumen', function () {
                   </tr>";
     }
 
-    // Agregamos la fila de TFOOT al final
     $html .= "<tfoot>
                 <tr>
                     <td colspan='4' style='text-align: right; padding-right: 10px;'><strong>Sumatoria Total Acumulada:</strong></td>
@@ -120,4 +116,50 @@ Route::get('/facturas/proveedores/resumen', function () {
     
     $html .= '</table>';
     echo $html;
+});
+
+
+// =========================================================================
+// PARTE 3: RUTAS AGRUPADAS Y AVANZADAS (Ejercicios 7, 8, 9 y 10)
+// =========================================================================
+
+// Ejercicio 7: Grupo de rutas para Administración (Prefijo 'admin')
+Route::prefix('admin')->group(function () {
+    Route::get('/dashboard', function () {
+        echo "<h1>Dashboard de Administración</h1><p>Panel de control para la gestión global de la farmacia.</p>";
+    });
+    
+    Route::get('/usuarios', function () {
+        echo "<h1>Gestión de Usuarios</h1><p>Módulo para administrar credenciales y empleados de MINEDUCYT-Pharma.</p>";
+    });
+});
+
+// Ejercicio 8: Prefijos con Parámetros Opcionales (Inventario de Medicamentos)
+Route::prefix('inventario')->group(function () {
+    Route::get('/medicamentos/{categoria?}', function ($categoria = 'General') {
+        echo "<h1>Inventario de Medicamentos</h1>";
+        echo "<p>Mostrando existencias para la categoría: <strong>" . ucfirst($categoria) . "</strong></p>";
+        echo "<ul>
+                <li>Acetaminofén (500mg) - Stock: 500 unidades</li>
+                <li>Loratadina (10mg) - Stock: 230 unidades</li>
+                <li>Vitamina C Masticable - Stock: 150 unidades</li>
+              </ul>";
+    });
+});
+
+// Ejercicio 9: Restricciones de Expresiones Regulares (Reportes de Ventas Numéricos)
+Route::get('/reportes/ventas/{anio}/{mes}', function ($anio, $mes) {
+    echo "<h1>Generador de Reportes Anual</h1>";
+    echo "<p>Buscando datos de ventas para el periodo: <strong>Mes: $mes / Año: $anio</strong></p>";
+    echo "<p style='color: green;'>✔ Validación Regex Exitosa: Parámetros confirmados como numéricos.</p>";
+})->where(['anio' => '[0-9]{4}', 'mes' => '[0-9]{2}']);
+
+// Ejercicio 10: Múltiples Parámetros Obligatorios (Control de Devoluciones de Fármacos)
+Route::get('/devoluciones/cliente/{idCliente}/medicamento/{idMedicamento}', function ($idCliente, $idMedicamento) {
+    echo "<div style='border: 2px dashed #ff9800; padding: 20px; background-color: #fffde7; max-width: 500px;'>";
+    echo "<h2>🔄 Formulario de Devolución Autorizada</h2>";
+    echo "<p><strong>Código de Cliente Asociado:</strong> CLIENTE-{$idCliente}</p>";
+    echo "<p><strong>Código de Producto / Barra:</strong> PHARMA-MED-{$idMedicamento}</p>";
+    echo "<p style='color: #e65100;'><strong>Estado:</strong> Retornado a bodega para control de calidad por lote.</p>";
+    echo "</div>";
 });
